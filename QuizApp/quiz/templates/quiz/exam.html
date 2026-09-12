@@ -1,0 +1,62 @@
+{% extends 'quiz/base.html' %}
+{% block content %}
+<div class="sticky-top bg-white border-bottom p-3 mb-4 shadow-sm text-center rounded">
+    <h4 class="text-danger mb-0">Time Remaining: <span id="timer">02:00:00</span></h4>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">{{ topic.name }} Practice Exam</h2>
+        
+        <form id="exam-form" action="{% url 'submit_exam' %}" method="POST">
+            {% csrf_token %}
+            
+            {% for question in questions %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <p class="fw-bold">{{ forloop.counter }}. {{ question.text }}</p>
+                    
+                    {% for choice in question.get_random_choices %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="choice_{{ choice.id }}" value="{{ choice.id }}">
+                        <label class="form-check-label" for="choice_{{ choice.id }}">
+                            {{ choice.text }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn btn-success btn-lg w-100 mb-5">Submit Exam</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 2 hours in seconds
+    let timeRemaining = 7200; 
+    const timerDisplay = document.getElementById('timer');
+    const examForm = document.getElementById('exam-form');
+
+    const countdown = setInterval(() => {
+        timeRemaining--;
+
+        let hours = Math.floor(timeRemaining / 3600);
+        let minutes = Math.floor((timeRemaining % 3600) / 60);
+        let seconds = timeRemaining % 60;
+
+        // Format to HH:MM:SS
+        hours = hours < 10 ? "0" + hours : hours;
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        timerDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+
+        if (timeRemaining <= 0) {
+            clearInterval(countdown);
+            examForm.submit(); // Auto-submit when time is up
+        }
+    }, 1000);
+</script>
+{% endblock %}

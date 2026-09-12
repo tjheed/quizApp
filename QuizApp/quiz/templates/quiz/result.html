@@ -1,0 +1,48 @@
+{% extends 'quiz/base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm text-center mb-5">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Exam Results</h2>
+                <h1 class="display-4 {% if percentage >= 70 %}text-success{% else %}text-danger{% endif %}">
+                    {{ percentage }}%
+                </h1>
+                <p class="lead mt-3">You scored <strong>{{ score }}</strong> out of <strong>{{ total_questions }}</strong>.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary mt-2">Take Another Exam</a>
+            </div>
+        </div>
+
+        <h3 class="mb-4">Exam Summary</h3>
+        {% for item in summary %}
+        <div class="card shadow-sm mb-4 border-{% if item.is_correct %}success{% else %}danger{% endif %}">
+            <div class="card-header bg-{% if item.is_correct %}success{% else %}danger{% endif %} text-white">
+                <strong>Question {{ forloop.counter }}</strong>
+            </div>
+            <div class="card-body">
+                <p class="fw-bold">{{ item.question_text }}</p>
+                <p class="mb-1">
+                    Your Answer: <span class="{% if item.is_correct %}text-success{% else %}text-danger fw-bold{% endif %}">
+                        {{ item.selected }}
+                    </span>
+                </p>
+                
+                {% if not item.is_correct %}
+                <p class="mb-1">
+                    Correct Answer: <span class="text-success fw-bold">{{ item.correct }}</span>
+                </p>
+                {% endif %}
+
+                {% if item.explanation %}
+                <hr>
+                <div class="bg-light p-3 rounded">
+                    <strong>Explanation:</strong><br>
+                    {{ item.explanation }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

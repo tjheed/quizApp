@@ -1,0 +1,24 @@
+{% extends 'quiz/base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h3 class="card-title mb-4">Certification Practice Exam</h3>
+                <form action="{% url 'take_exam' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <select name="topic" class="form-select form-select-lg" required>
+                            <option value="" disabled selected>Select an Exam Topic...</option>
+                            {% for topic in topics %}
+                                <option value="{{ topic.id }}">{{ topic.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">Start 2-Hour Exam</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
